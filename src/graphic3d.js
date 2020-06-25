@@ -32,6 +32,7 @@ class Graphic extends React.Component {
     this.preDraw = this.preDraw.bind(this)
     this.drawLine = this.drawLine.bind(this)
     this.draw = this.draw.bind(this)
+    this.drawOblique = this.drawOblique.bind(this)
   }
 
     onChangeHandler(event){
@@ -93,6 +94,27 @@ class Graphic extends React.Component {
         this.setState({context:context})
     }
 
+    drawOblique(context){
+        console.log("drawOblique")
+        const sin = math.sin(math.unit(45, 'deg'))
+        const cos = math.cos(math.unit(45, 'deg'))
+        let drawObliqueMatrix = []
+        this.state.vertexMatrix.map(point => {
+            point.subset(math.index(2, 0), point.subset(math.index(2, 0))*cos*0.5)
+            point.subset(math.index(2, 1), point.subset(math.index(2, 1))*sin*0.5)
+            drawObliqueMatrix.push(point)
+            })
+            console.log(drawObliqueMatrix)
+        this.state.context.clearRect(0, 0, this.refs.canvas.width,  this.refs.canvas.height);
+        this.state.context.beginPath() 
+        // NEED TO FINISH    
+        this.state.paths.map(path => {
+            for(let i=0; i<path.length-1; i++){
+                
+            this.drawLine(this.state.context,drawObliqueMatrix[path[i]-1],drawObliqueMatrix[path[i+1]-1])
+            }
+            })
+    }
     draw(context){
         this.state.paths.map(path => {
             for(let i=0; i<path.length-1; i++){
@@ -102,6 +124,7 @@ class Graphic extends React.Component {
         }
 
     drawLine(ctx, p1, p2){
+        console.log("innn")
         ctx.moveTo(p1.subset(math.index(0, 0))+p1.subset(math.index(3, 3)) , p1.subset(math.index(1, 1))+p1.subset(math.index(3, 3)));
         ctx.lineTo(p2.subset(math.index(0, 0))+p2.subset(math.index(3, 3)) , p2.subset(math.index(1, 1))+p2.subset(math.index(3, 3)));
         ctx.stroke();
@@ -111,7 +134,6 @@ class Graphic extends React.Component {
 
     scale(size){
         let scaled = []
-        console.log(this.state.vertexMatrix)
         this.state.vertexMatrix.map(point => {
              if(point){
                 point.subset(math.index(0, 0), point.subset(math.index(0, 0))*size)
@@ -121,7 +143,6 @@ class Graphic extends React.Component {
             scaled.push(point)
         })
         this.setState({vertexMatrix: scaled})
-        console.log(this.state.vertexMatrix)
         this.state.context.clearRect(0, 0, this.refs.canvas.width,  this.refs.canvas.height);
         this.state.context.beginPath()
         this.draw(this.state.context)
@@ -230,7 +251,7 @@ class Graphic extends React.Component {
                 <input type="file" name="file" onChange={this.onChangeHandler}/>
                 <ButtonGroup variant="text" color="primary" aria-label="text primary button group">
                   <Button onClick={()=> this.setState({projection:"orthographic"})}>Parallel orthographic</Button>
-                  <Button onClick={()=> this.setState({projection:"oblique"})}>Parallel oblique</Button>
+                  <Button onClick={()=> {this.drawOblique(this.state.context)}}>Parallel oblique</Button>
                   <Button onClick={()=> this.setState({projection:"perspective"})}>Perspective</Button>
                 </ButtonGroup>
                 <h3>Scaling</h3>
