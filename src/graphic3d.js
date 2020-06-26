@@ -202,7 +202,7 @@ class Graphic extends React.Component {
     
 
     checkScaleInput = input => {
-        if(isNaN(input) || input.length===0)
+        if(isNaN(input) || input.length===0 || input<0)
             alert("please enter a number")
         else
             this.scale(input)
@@ -216,7 +216,7 @@ class Graphic extends React.Component {
         }
 
     checkRotationInputY = input => {
-        if(isNaN(input) || input.length===0)
+        if(isNaN(input) || input.length===0 )
             alert("please enter a number")
         else
             this.rotateY(input)   
